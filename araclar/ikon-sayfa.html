@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><title>İkon çizim sayfası</title>
+<!-- araclar/ikon-uret.mjs bu sayfayı açar; ikon ve favicon marka.js'den çizilir -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Nunito:wght@900&display=swap">
+<style>html,body{margin:0;background:transparent}svg{display:block}</style></head>
+<body><script type="module">
+import { ikonCiz, faviconCiz, fontlarHazir } from "../js/cizim/marka.js";
+window.ciz = async (tur, px) => { await fontlarHazir(); document.body.innerHTML = `<svg style="width:${px}px;height:${px}px"></svg>`;
+  const s = document.querySelector("svg"); tur === "ikon" ? ikonCiz(s) : faviconCiz(s);
+  return document.fonts.check("700 150px Fredoka"); };
+window.hazir = true;
+</script></body></html>

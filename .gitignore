@@ -1,0 +1,11 @@
+# Test output (screenshots from test/akis-test.mjs)
+test/cikti/
+
+# Music (Pixabay Content License: files may not be redistributed)
+ses/muzik-*.aac
+
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

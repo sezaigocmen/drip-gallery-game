@@ -1,0 +1,73 @@
+/* Temel: renk değişkenleri, oyun ekranı, ortak component'ler · Kaynak: 05-wireframe/1-oyun.html (A4, 26.11.2026) */
+:root{
+  --bg:#EEEAE4; --panel:#FFFFFF; --fg:#1B1712; --muted:#6A6157; --line:#DCD5CB; --accent:#2C88E3;
+  --f-head:"Space Grotesk","Segoe UI",sans-serif; --f-body:"Inter","Segoe UI",system-ui,sans-serif;
+  --wall-100:#FBEFD8; --wall-200:#F6E2BE; --wall-300:#EBCB98;
+  --wood-300:#D99556; --wood-400:#C98444; --wood-500:#BB783B; --wood-700:#7A4521; --wood-900:#5B3217; --edge-ink:#3D220E;
+  --canvas:#FFF9EE; --pencil:#6B5A48;
+  --green-300:#9BE04A; --green-500:#53AE1E; --green-800:#2F6E0E;
+  --blue-300:#6CC8FF; --blue-500:#2C88E3; --blue-800:#17508F;
+  --red-300:#FF7A5C; --red-500:#D8452B; --red-800:#8E2412;
+  --gold-300:#FFE27A; --gold-500:#FFC21A; --gold-800:#A86A00;
+  --ink-900:#4A2A12; --ink-on:#FFFFFF;
+  --paint-r:#D9472F; --paint-y:#EDB83A; --paint-b:#2E64B0; --paint-o:#E77B2E; --paint-g:#4E9A4A; --paint-p:#7D4FA6; /* C · Guaj paleti (js/veri/renkler.js COL ile aynı) */
+  --tape:#F1E6C2;
+  --f-display:"Fredoka","Arial Rounded MT Bold",sans-serif; --f-game:"Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15130F;--panel:#1E1B17;--fg:#F1ECE4;--muted:#A99F92;--line:#332E27;--accent:#6CC8FF;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15130F;--panel:#1E1B17;--fg:#F1ECE4;--muted:#A99F92;--line:#332E27;--accent:#6CC8FF;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;
+.screen{width:360px;height:640px;max-width:100%;position:relative;overflow:hidden;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 14px 30px rgba(0,0,0,.18);
+  background:linear-gradient(var(--wall-200) 0 70%,#C98E55 70% 71%,#A86B39 71%);font-family:var(--f-game);color:var(--ink-900);user-select:none}
+.screen.static *{pointer-events:none}
+
+/* ---------- 0 · Temel component'leri (birebir) ---------- */
+.panel{background:repeating-linear-gradient(90deg,var(--wood-400) 0 22px,var(--wood-500) 22px 23px,#C48040 23px 44px);border:3px solid var(--wood-900);border-radius:14px;
+  box-shadow:inset 0 3px 0 rgba(255,230,190,.55),inset 0 -4px 0 rgba(0,0,0,.15),0 4px 0 rgba(0,0,0,.25)}
+.stroke{color:#fff;text-shadow:0 2px 0 var(--edge-ink),1px 1px 0 var(--edge-ink),-1px 1px 0 var(--edge-ink),1px -1px 0 var(--edge-ink),-1px -1px 0 var(--edge-ink)}
+.btn{appearance:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--f-display);font-weight:700;color:#fff;
+  border:3px solid var(--e);background:linear-gradient(var(--t),var(--b));border-radius:16px;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.55),inset 0 -5px 0 rgba(0,0,0,.14),0 5px 0 var(--e),0 8px 10px rgba(0,0,0,.22);
+  text-shadow:0 2px 0 var(--e),1px 1px 0 var(--e),-1px 1px 0 var(--e),1px -1px 0 var(--e),-1px -1px 0 var(--e);transition:transform .06s,box-shadow .06s,filter .06s}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.btn:active{transform:translateY(3px) scale(.92);box-shadow:inset 0 3px 7px rgba(0,0,0,.28),0 0 0 var(--e);filter:brightness(.93)}
+.btn.primary{--t:var(--green-300);--b:var(--green-500);--e:var(--green-800)}
+.btn.secondary{--t:var(--blue-300);--b:var(--blue-500);--e:var(--blue-800)}
+.btn.danger{--t:var(--red-300);--b:var(--red-500);--e:var(--red-800)}
+.btn.size-l{height:56px;min-width:200px;padding:0 28px;font-size:22px}
+.btn.icon{width:48px;height:48px;min-width:0;padding:0;border-radius:14px}
+.btn.icon svg{width:24px;height:24px}
+.btn-text{appearance:none;background:none;border:0;cursor:pointer;height:48px;padding:0 12px;font-family:var(--f-game);font-weight:900;font-size:16px;color:var(--ink-900);text-decoration:underline;text-underline-offset:4px}
+.booster{position:relative;width:56px;height:56px;border-radius:16px;display:grid;place-items:center;cursor:pointer;appearance:none;
+  border:3px solid var(--blue-800);background:linear-gradient(var(--blue-300),var(--blue-500));
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.55),inset 0 -4px 0 rgba(0,0,0,.15),0 4px 0 var(--blue-800);transition:transform .06s,box-shadow .06s}
+.booster svg{width:30px;height:30px}
+.booster:active{transform:translateY(4px);box-shadow:inset 0 3px 6px rgba(0,0,0,.28)}
+.booster:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.badge{position:absolute;right:-8px;top:-8px;min-width:24px;height:24px;padding:0 5px;border-radius:12px;border:2.5px solid #fff;background:linear-gradient(#FF6A5C,#D9281B);
+  color:#fff;font-family:var(--f-game);font-weight:900;font-size:13px;display:grid;place-items:center}
+.badge.plus{background:linear-gradient(var(--green-300),var(--green-500));font-size:16px}
+.blabel{position:absolute;left:50%;bottom:-11px;transform:translateX(-50%);white-space:nowrap;padding:0 7px;border-radius:8px;
+  background:var(--edge-ink);border:2px solid #FFE9C7;color:#fff;font-family:var(--f-game);font-weight:900;font-size:11px;line-height:16px}
+.hud{position:absolute;left:0;right:0;top:24px;height:48px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.movebox{width:64px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;padding:0}
+.movebox small{font-family:var(--f-game);font-weight:900;font-size:10px;color:#FFE9C7;letter-spacing:.5px}
+.movebox b{font-family:var(--f-display);font-weight:700;font-size:24px}
+.movebox.low{background:linear-gradient(var(--red-300),var(--red-500));border-color:var(--red-800)}
+.sign{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;height:36px;padding:0 14px;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 7px,rgba(60,30,10,.18) 7px 8px),linear-gradient(#94572B,var(--wood-700));
+  border:2px solid var(--wood-900);border-radius:5px;box-shadow:inset 0 1.5px 0 rgba(255,220,170,.35),0 2px 3px rgba(0,0,0,.3);
+  font-family:var(--f-display);font-weight:700;font-size:18px;white-space:nowrap;cursor:default;user-select:none}
+.sign .nail{width:7px;height:7px;flex:0 0 auto;border-radius:50%;background:radial-gradient(circle at 35% 35%,#F4E3C1,#A88B5E 60%,#6B5233);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.sign.size-l{height:44px;padding:0 18px;font-size:22px;gap:14px}
+.sign.size-l .nail{width:9px;height:9px}
+.booster-bar{position:absolute;left:16px;right:16px;top:544px;height:80px;display:flex;align-items:center;justify-content:space-around;padding:0 24px 6px}
+.scrim{position:absolute;inset:0;background:rgba(25,14,6,.62)}
+.popup{position:absolute;left:24px;right:24px;top:150px;display:flex;flex-direction:column;align-items:center;gap:16px;padding:44px 20px 20px;text-align:center}
+.popup .sign{position:absolute;top:-22px;left:50%;transform:translateX(-50%)}
+.popup .body{width:100%;background:var(--canvas);border-radius:12px;border:2px solid var(--wood-900);padding:16px;box-shadow:inset 0 2px 4px rgba(0,0,0,.12)}
+.popup .body p{margin:0;font-family:var(--f-game);font-weight:800;font-size:16px;line-height:22px;color:var(--ink-900)}
+.popup .btn{width:100%}
+.popup .btn-text{color:#FFE9C7}
+

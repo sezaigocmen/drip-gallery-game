@@ -1,0 +1,4 @@
+# Metin dosyalarının satır sonu her bilgisayarda aynı kalsın (LF)
+* text=auto eol=lf
+*.png binary
+*.jpg binary

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Drip Gallery</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#7A4521">
+<link rel="icon" type="image/png" sizes="32x32" href="ikon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="ikon/favicon-16.png">
+<link rel="apple-touch-icon" href="ikon/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap">
+<link rel="stylesheet" href="css/temel.css">
+<link rel="stylesheet" href="css/oyun.css">
+<link rel="stylesheet" href="css/ekranlar.css">
+<style>
+/* Kabuk: telefon ekranı (360 × 640) pencereye sığar; dar ekranda kenardan kenara */
+html,body{height:100%}
+body{margin:0;padding:0;overflow:hidden;display:flex;background:#17110B}
+.stagewrap{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;position:relative;
+  background:radial-gradient(120% 80% at 50% 40%,#3A2A1C,#17110B)}
+.device{position:relative;border-radius:34px;padding:10px;background:#0E0B08;box-shadow:0 0 0 2px #2B2119,0 30px 60px rgba(0,0,0,.5)}
+.device .screen{border-radius:24px;transform-origin:0 0;position:absolute;left:10px;top:10px;max-width:none;box-shadow:none}
+@media (max-width:760px){
+  .stagewrap{background:linear-gradient(var(--wall-200) 0 70%,#A86B39 70%)}
+  .device{padding:0;border-radius:0;background:none;box-shadow:none}
+  .device .screen{left:0;top:0;border-radius:0}
+}
+</style>
+</head>
+<body>
+<main class="stagewrap" id="stagewrap">
+  <div class="device" id="device"><div class="screen" id="live"></div></div>
+</main>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
