@@ -146,6 +146,16 @@ button.gdec.on{pointer-events:auto;appearance:none;cursor:pointer;padding:0;back
 .sw::after{content:"";position:absolute;left:2px;top:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 0 rgba(0,0,0,.2);transition:left .15s}
 .sw.on{background:#5CC02E;border-color:#2C6E12}
 .sw.on::after{left:24px}
+/* Müzik sesi sürgüsü (27.11.2026): anahtarla aynı dil (gri iz, yeşil dolu kısım, beyaz düğme); dokunma alanı 40 px */
+.s50vol{display:flex;align-items:center;gap:10px;min-height:40px;font-family:var(--f-game);font-weight:900;font-size:15px;color:var(--ink-900);cursor:pointer}
+.s50vol.off{opacity:.5}
+.s50vol b{width:30px;text-align:right;font-size:14px}
+.s50vol input{flex:1;min-width:0;height:40px;margin:0;background:none;-webkit-appearance:none;appearance:none;cursor:pointer;touch-action:pan-y}
+.s50vol input::-webkit-slider-runnable-track{height:14px;border-radius:9px;border:3px solid #A39A8E;background:linear-gradient(90deg,#5CC02E var(--v),#CFC7BB var(--v))}
+.s50vol input::-moz-range-track{height:8px;border-radius:9px;border:3px solid #A39A8E;background:linear-gradient(90deg,#5CC02E var(--v),#CFC7BB var(--v))}
+.s50vol input::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:-10px;border-radius:50%;background:#fff;border:3px solid #2C6E12;box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.s50vol input::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid #2C6E12;box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.s50vol input:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:9px}
 .s50lang{appearance:none;cursor:pointer;height:34px;padding:0 10px;border-radius:10px;background:#F3E6CF;border:2px solid #D9B98A;font-family:var(--f-game);font-weight:900;font-size:14px;color:var(--ink-900)}
 .s50demo{position:relative;width:100%;display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:16px 10px 0;border:2px dashed #FFE1B8;border-radius:12px;background:rgba(255,249,238,.12)}
 .s50demo .dt{position:absolute;top:-10px;left:10px;font-family:var(--f-game);font-size:10px;font-weight:900;letter-spacing:.08em;line-height:16px;padding:0 6px;border-radius:5px;background:var(--wood-900);color:#FFE9C7}

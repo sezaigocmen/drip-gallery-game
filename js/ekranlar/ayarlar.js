@@ -4,7 +4,10 @@ import { QS, XICON } from "../cizim/ikonlar.js";
 import { VENUES } from "../cizim/mekanlar.js";
 import { lookIdx, lookOf, ressamSVG } from "../cizim/ressam.js";
 import { stActive, stHrs } from "./magaza.js";
-import { ayarDegisti } from "../ses.js";
+import { ayarDegisti, MUZIK_VARSAYILAN } from "../ses.js";
+/* Sürgü tıklama akışına girmez (data-act yok); değeri burada okunur, ekran yeniden çizilmez */
+document.addEventListener("input",e=>{ const r=e.target.closest&&e.target.closest(".s50vol input"); if(!r) return;
+  live.set.mv=+r.value; r.style.setProperty("--v",r.value+"%"); r.parentElement.querySelector("b").textContent=r.value; ayarDegisti(); });
 
 /* ================= S50 Ayarlar (Öneri 11 · A, Sezai onayı) =================
    Sergi ve Defterler HUD'undaki dişliden açılır. Popup/Default. Üstte S11c ile AYNI hızlı ayarlar (live.set, tek kaynak),
@@ -26,11 +29,14 @@ export function settingsHTML(G,set,confirm,info){
     <button class="btn primary size-l" type="button" data-act="sback">Vazgeç</button>
     <button class="btn-text red" type="button" data-act="sdoreset">Yine de sıfırla</button></div></div>`;
   const toggles=`<div class="qset">${QS.map(([k,t,ic])=>`<div class="q"><button class="btn secondary icon${set[k]?"":" off"}" type="button" data-act="sqs" data-k="${k}" aria-pressed="${set[k]}" aria-label="${t}">${ic}</button><span>${t}</span></div>`).join("")}</div>`;
+  /* Müzik sesi sürgüsü (27.11.2026, karar B): sürüklerken müzik anında değişir ve kaydolur; Müzik kapalıyken soluk ama ayarlanabilir */
+  const mv=set.mv??MUZIK_VARSAYILAN;
+  const vol=`<label class="s50vol${set.mus?"":" off"}"><span>Müzik sesi</span><input type="range" min="0" max="100" step="5" value="${mv}" style="--v:${mv}%" aria-label="Müzik sesi"><b>${mv}</b></label>`;
   const stOn=live.st&&live.st.t0!=null&&stActive();
   const fair=stOn?`<div class="s50f"><span>Başlangıç paketi</span><b>${stHrs()} sa kaldı</b></div><button class="btn secondary size-s" type="button" data-act="sday">1 gün ileri sar</button>`:"";
   return `<div class="galsub"><div class="scrim" data-act="setclose"></div><div class="popup panel s50">${sign("Ayarlar")}
     <button class="btn danger icon close" type="button" data-act="setclose" aria-label="Kapat">${XICON}</button>
-    <div class="body">${toggles}<div class="pz-hr"></div>
+    <div class="body">${toggles}${vol}<div class="pz-hr"></div>
       <div class="s50r"><span>Hareketleri azalt<small>Uçuşlar ve parlamalar sadeleşir</small></span><button class="sw${set.rm?" on":""}" type="button" role="switch" aria-checked="${!!set.rm}" aria-label="Hareketleri azalt" data-act="srm"></button></div>
       <div class="s50r"><span>Görünüm<small>Ressam · bedava</small></span><button class="s50lang s06set" type="button" data-act="slook" aria-label="Görünümü değiştir"><i class="mini">${ressamSVG(lookOf(G).k,(VENUES[G.v||0]||VENUES[0]).ch||0,lookOf(G).vi,"face")}</i>Değiştir</button></div></div>
     <div class="pz-row"><button class="btn secondary size-s" type="button" data-act="shelp">Yardım</button><button class="btn secondary size-s" type="button" data-act="sprivacy">Gizlilik</button></div>

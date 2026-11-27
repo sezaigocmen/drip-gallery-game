@@ -15,7 +15,7 @@ import { ayarDegisti, coinVardi, dokmeSesi, efekt, jingle, muzik, titret } from 
 
 /* ================= Canlı prototip ================= */
 export const STATES=[["idle","Boşta"],["sel","Tüp seçili"],["pick","Bölge seçimi"],["aim","Nişan modu"],["popup","Pop-up"]];
-export const live={el:document.getElementById("live"),seen:{},newc:null,regHand:null,set:{mus:true,snd:true,vib:true},pause:null,pauseQ:false,s:makeState(1),step:0,hist:[],ui:{},mode:"idle",pending:null,tt:null,idleT:null,autoT:null,showHint:false};
+export const live={el:document.getElementById("live"),seen:{},newc:null,regHand:null,set:{mus:true,snd:true,vib:true,mv:60},pause:null,pauseQ:false,s:makeState(1),step:0,hist:[],ui:{},mode:"idle",pending:null,tt:null,idleT:null,autoT:null,showHint:false};
 export const curStep=()=>(LEVELS[live.s.lv].steps||[])[live.step]||null;
 export const isGuided=()=>{const st=curStep();return !!st&&!st.expect.free&&live.mode!=="popup";};
 export function chips(){const el=document.getElementById("stateChips"); if(el) el.innerHTML=STATES.map(([k,t])=>`<span class="${live.mode===k?"on":""}">${t}</span>`).join("")+

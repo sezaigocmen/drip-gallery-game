@@ -7,8 +7,11 @@ import { SESLER } from "./veri/ses-listesi.js";
 const MUZIK_DUZEY = .3, KISIK = .2, CAPRAZ = 2, GECIS = .8;
 const TITRESIM = { yanlis: [30, 60, 30], tup_tamam: [25], boyama: [15], kazanma: [40, 80, 40, 80, 60], kaybetme: [120] }; /* 4A */
 const AYAR_ANAHTAR = "dg-ayar";
+/* Müzik sesi sürgüsü (27.11.2026, Sezai: "müzik yüksek", karar B): Ayarlar'da 0–100; 100 = eski sabit düzey (MUZIK_DUZEY), varsayılan 60. */
+export const MUZIK_VARSAYILAN = 60;
+const muzikSeviye = () => set.mus ? MUZIK_DUZEY * (set.mv ?? MUZIK_VARSAYILAN) / 100 : 0;
 
-let set = { mus: true, snd: true, vib: true };
+let set = { mus: true, snd: true, vib: true, mv: MUZIK_VARSAYILAN };
 let AC = null, efektG = null, muzikG = null, kisG = null;
 const BUF = {}, bekleyen = {};
 /* Test ve hata ayıklama: çalınan efekt ve titreşimlerin son 50'si (oyuncu görmez) */
@@ -18,18 +21,20 @@ const logla = x => { sesLog.push(x); sesGoruldu.add(x); if (sesLog.length > 50) 
 
 /* Ayarlar: tarayıcıda hatırlanır (gizli pencerede ya da depolama kapalıysa sessizce varsayılan) */
 export function ayarYukle(hedef) {
-  try { const v = JSON.parse(localStorage.getItem(AYAR_ANAHTAR) || "null"); if (v && typeof v === "object") for (const k of ["mus", "snd", "vib", "rm"]) if (typeof v[k] === "boolean") hedef[k] = v[k]; } catch (e) {}
+  try { const v = JSON.parse(localStorage.getItem(AYAR_ANAHTAR) || "null"); if (v && typeof v === "object") for (const k of ["mus", "snd", "vib", "rm"]) if (typeof v[k] === "boolean") hedef[k] = v[k];
+    if (v && typeof v.mv === "number" && isFinite(v.mv)) hedef.mv = Math.max(0, Math.min(100, Math.round(v.mv))); } catch (e) {}
+  if (typeof hedef.mv !== "number") hedef.mv = MUZIK_VARSAYILAN;
   set = hedef; uygula(); return hedef;
 }
 /* Ayarlar değişince çağrılır: kaydeder ve hemen uygular */
 export function ayarDegisti() {
-  try { localStorage.setItem(AYAR_ANAHTAR, JSON.stringify({ mus: !!set.mus, snd: !!set.snd, vib: !!set.vib, rm: !!set.rm })); } catch (e) {}
+  try { localStorage.setItem(AYAR_ANAHTAR, JSON.stringify({ mus: !!set.mus, snd: !!set.snd, vib: !!set.vib, rm: !!set.rm, mv: set.mv ?? MUZIK_VARSAYILAN })); } catch (e) {}
   uygula();
 }
 function uygula() {
   if (!AC) return; const t = AC.currentTime;
   efektG.gain.setTargetAtTime(set.snd ? 1 : 0, t, .02);
-  muzikG.gain.setTargetAtTime(set.mus ? MUZIK_DUZEY : 0, t, .08);
+  muzikG.gain.setTargetAtTime(muzikSeviye(), t, .08);
   if (set.mus && istenen && !cal) muzikBaslat(istenen);
 }
 
@@ -39,13 +44,13 @@ function kur() {
   const C = window.AudioContext || window.webkitAudioContext; if (!C) return false;
   AC = new C(); efektG = AC.createGain(); muzikG = AC.createGain(); kisG = AC.createGain();
   efektG.connect(AC.destination); kisG.connect(muzikG).connect(AC.destination);
-  efektG.gain.value = set.snd ? 1 : 0; muzikG.gain.value = set.mus ? MUZIK_DUZEY : 0;
+  efektG.gain.value = set.snd ? 1 : 0; muzikG.gain.value = muzikSeviye();
   return true;
 }
 function yukle(ad) {
   if (BUF[ad]) return Promise.resolve(BUF[ad]);
   return bekleyen[ad] || (bekleyen[ad] = fetch(new URL(`../ses/${ad}.aac`, import.meta.url)).then(r => r.arrayBuffer())
-    .then(b => new Promise((ok, no) => AC.decodeAudioData(b, ok, no))).then(b => (BUF[ad] = b)).catch(() => null));
+    .then(b => new Promise((ok, no) => { const p = AC.decodeAudioData(b, ok, no); if (p && p.catch) p.catch(() => {}); })) /* yeni tarayıcılar ayrıca söz döndürür: hatası burada susturulur (no zaten çağrılır) */.then(b => (BUF[ad] = b)).catch(() => null));
 }
 export function sesBaslat() {
   if (!kur()) return;
@@ -93,7 +98,7 @@ export function muzik(ad) {
 }
 export const caliyor = () => istenen;
 /* Test: motorun durumu (açık mı, kaç ses yüklü, şu an çalan müzik ve kısma düzeyi) */
-export const sesDurum = () => ({ durum: AC?.state, yuklu: Object.keys(BUF).length, muzik: cal?.ad || null, kisma: kisG ? +kisG.gain.value.toFixed(2) : null });
+export const sesDurum = () => ({ durum: AC?.state, yuklu: Object.keys(BUF).length, muzik: cal?.ad || null, kisma: kisG ? +kisG.gain.value.toFixed(2) : null, muzikKazanc: +muzikSeviye().toFixed(3) });
 function sondur(k, sn) { const t = AC.currentTime; k.g.gain.cancelScheduledValues(t); k.g.gain.setValueAtTime(k.g.gain.value, t); k.g.gain.linearRampToValueAtTime(0, t + sn); try { k.src.stop(t + sn + .05); } catch (e) {} }
 async function muzikBaslat(ad) {
   const n = ++dongu, b = await yukle("muzik-" + ad); if (!b || n !== dongu || istenen !== ad || cal) return;

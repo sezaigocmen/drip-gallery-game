@@ -129,6 +129,9 @@ await ok("A8 ses dosyaları: hepsi yükleniyor ve çözülüyor", () => ev(`cons
   for(const k of ks){ if(${MUZIK_YOK} && k.startsWith("muzik-")) continue; const b=await (await fetch("ses/"+k+".aac")).arrayBuffer(); const d=await new OfflineAudioContext(1,44100,44100).decodeAudioData(b); if(Math.abs(d.duration-SL[k].d)>.15) throw new Error(k+" süre "+d.duration); } return true;`));
 await ok("A8 Ayarlar: Müzik/Ses/Titreşim kaydedilir", () => ev(`const S=L.set; S.mus=false; S.vib=false; DG.ayarDegisti(); const v=JSON.parse(localStorage.getItem("dg-ayar"));
   const ok1=v.mus===false&&v.vib===false&&v.snd===true; const o={}; DG.ayarYukle(o); S.mus=true; S.vib=true; DG.ayarDegisti(); DG.ayarYukle(S); return ok1&&o.mus===false&&o.vib===false;`));
+await ok("Müzik sesi sürgüsü: kaydedilir, müzik kazancı ölçeklenir (100 = eski düzey .3)", () => ev(`const S=L.set; S.mus=true; S.mv=40; DG.ayarDegisti();
+  const v=JSON.parse(localStorage.getItem("dg-ayar")); const o={}; DG.ayarYukle(o); const k=DG.sesDurum().muzikKazanc;
+  S.mv=60; DG.ayarDegisti(); DG.ayarYukle(S); if(v.mv!==40||o.mv!==40||Math.abs(k-.12)>.001) throw new Error(JSON.stringify({v:v.mv,o:o.mv,k})); return true;`));
 /* A9: efektler oyun anlarına bağlı; oyundaki "Hareketleri azalt" anahtarı hepsini kapatır */
 const A9 = `const n=()=>document.querySelectorAll(".fxkat .pfx i").length, tepe=async ms=>{let m=0; const t=Date.now(); while(Date.now()-t<ms){ m=Math.max(m,n()); await W(25);} return m;};
   L.shop=null; DG.load(DG.makeState(11)); await W(300); if(L.newc){ /* önceki testten Mağaza katmanı açık kalmış olabilir */ await U(()=>L.newc&&L.newc.ready,3000); await C('[data-act="newok"]'); }
